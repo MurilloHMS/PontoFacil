@@ -159,19 +159,23 @@ public class HomeViewModel extends ViewModel {
         }
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            Date entrada = sdf.parse(registroAtual.getEntrada());
+            SimpleDateFormat sdfCompleto = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            String dataHoje = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+            Date entrada = sdfCompleto.parse(dataHoje + " " + registroAtual.getEntrada());
             Date agora = new Date();
 
             long diffMillis = agora.getTime() - entrada.getTime();
 
+
             if (registroAtual.getAlmocoSaida() != null && registroAtual.getAlmocoRetorno() != null) {
-                Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
-                Date almocoRetorno = sdf.parse(registroAtual.getAlmocoRetorno());
+                Date almocoSaida = sdfCompleto.parse(dataHoje + " " + registroAtual.getAlmocoSaida());
+                Date almocoRetorno = sdfCompleto.parse(dataHoje + " " + registroAtual.getAlmocoRetorno());
                 long almocoMillis = almocoRetorno.getTime() - almocoSaida.getTime();
                 diffMillis -= almocoMillis;
             } else if (registroAtual.getAlmocoSaida() != null) {
-                Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
+                Date almocoSaida = sdfCompleto.parse(dataHoje + " " + registroAtual.getAlmocoSaida());
                 diffMillis = almocoSaida.getTime() - entrada.getTime();
             }
 
@@ -183,6 +187,7 @@ public class HomeViewModel extends ViewModel {
             horasTrabalhadas.setValue("--:--");
         }
     }
+
 
     private String obterHoraAtual() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -199,7 +204,6 @@ public class HomeViewModel extends ViewModel {
         handler.removeCallbacks(atualizadorHoras);
     }
 
-    // Getters para LiveData
     public LiveData<String> getStatusText() {
         return statusText;
     }

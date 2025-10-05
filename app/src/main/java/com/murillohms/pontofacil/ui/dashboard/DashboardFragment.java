@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.murillohms.pontofacil.R;
-import com.murillohms.pontofacil.ui.home.HistoricoAdapter;
+import com.murillohms.pontofacil.ui.historico.HistoricoAdapter;
+
 
 public class DashboardFragment extends Fragment {
 
@@ -54,7 +55,7 @@ public class DashboardFragment extends Fragment {
     private void observarViewModel() {
         dashboardViewModel.getRegistrosMes().observe(getViewLifecycleOwner(), registros -> {
             if (registros != null && !registros.isEmpty()) {
-                historicoAdapter.setRegistros(registros);
+//                historicoAdapter.setRegistros(registros);
                 rvHistorico.setVisibility(View.VISIBLE);
                 tvSemDados.setVisibility(View.GONE);
 

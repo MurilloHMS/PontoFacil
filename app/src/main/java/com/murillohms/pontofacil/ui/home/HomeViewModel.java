@@ -1,19 +1,24 @@
 package com.murillohms.pontofacil.ui.home;
 
+import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import com.murillohms.pontofacil.domain.model.RegistroPonto;
+import com.murillohms.pontofacil.domain.entity.FuncionarioEntity;
+import com.murillohms.pontofacil.domain.entity.RegistroPontoEntity;
+import com.murillohms.pontofacil.infrastructure.repository.PontoRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class HomeViewModel extends ViewModel {
+public class HomeViewModel extends AndroidViewModel {
 
+    private final PontoRepository repository;
     private final MutableLiveData<String> statusText = new MutableLiveData<>();
     private final MutableLiveData<String> horasTrabalhadas = new MutableLiveData<>();
     private final MutableLiveData<Boolean> botaoEntradaHabilitado = new MutableLiveData<>();
@@ -21,14 +26,42 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<Boolean> botaoAlmocoRetornoHabilitado = new MutableLiveData<>();
     private final MutableLiveData<Boolean> botaoSaidaHabilitado = new MutableLiveData<>();
     private final MutableLiveData<String> mensagemErro = new MutableLiveData<>();
+    private final MutableLiveData<String> mensagemSucesso = new MutableLiveData<>();
 
-    private RegistroPonto registroAtual;
+    private RegistroPontoEntity registroAtual;
+    private FuncionarioEntity funcionarioAtual;
     private Handler handler;
     private Runnable atualizadorHoras;
 
-    public HomeViewModel() {
+    public HomeViewModel(@NonNull Application application) {
+        super(application);
+        repository = new PontoRepository(application);
         inicializarEstadoInicial();
         configurarAtualizadorAutomatico();
+        carregarFuncionario();
+    }
+
+    private void carregarFuncionario() {
+        repository.getFuncionarioAtivo().observeForever(funcionario -> {
+            if (funcionario != null) {
+                funcionarioAtual = funcionario;
+                verificarRegistroPendente();
+            }
+        });
+    }
+
+    private void verificarRegistroPendente() {
+        if (funcionarioAtual == null) return;
+
+        String dataHoje = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+        repository.getRegistroByData(funcionarioAtual.getId(), dataHoje, registro -> {
+            if (registro != null && registro.getSaida() == null) {
+                registroAtual = registro;
+                atualizarInterface();
+                iniciarAtualizacaoAutomatica();
+            }
+        });
     }
 
     private void inicializarEstadoInicial() {
@@ -54,16 +87,27 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void registrarEntrada() {
+        if (funcionarioAtual == null) {
+            mensagemErro.setValue("Configure seus dados primeiro!");
+            return;
+        }
+
         if (registroAtual != null) {
             mensagemErro.setValue("Você já registrou a entrada hoje!");
             return;
         }
 
-        registroAtual = new RegistroPonto();
+        registroAtual = new RegistroPontoEntity();
+        registroAtual.setFuncionarioId(funcionarioAtual.getId());
+        registroAtual.setData(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date()));
         registroAtual.setEntrada(obterHoraAtual());
 
-        atualizarInterface();
-        iniciarAtualizacaoAutomatica();
+        repository.inserirRegistro(registroAtual, id -> {
+            registroAtual.setId((int) id);
+            mensagemSucesso.setValue("✓ Entrada registrada: " + registroAtual.getEntrada());
+            atualizarInterface();
+            iniciarAtualizacaoAutomatica();
+        });
     }
 
     public void registrarAlmocoSaida() {
@@ -78,7 +122,11 @@ public class HomeViewModel extends ViewModel {
         }
 
         registroAtual.setAlmocoSaida(obterHoraAtual());
+
+        repository.atualizarRegistro(registroAtual);
+        mensagemSucesso.setValue("✓ Saída para almoço: " + registroAtual.getAlmocoSaida());
         atualizarInterface();
+        pararAtualizacaoAutomatica();
     }
 
     public void registrarAlmocoRetorno() {
@@ -93,31 +141,34 @@ public class HomeViewModel extends ViewModel {
         }
 
         registroAtual.setAlmocoRetorno(obterHoraAtual());
+
+        repository.atualizarRegistro(registroAtual);
+        mensagemSucesso.setValue("✓ Retorno do almoço: " + registroAtual.getAlmocoRetorno());
         atualizarInterface();
         iniciarAtualizacaoAutomatica();
     }
 
-    public String finalizarPonto() {
+    public void registrarSaida() {
         if (registroAtual == null || registroAtual.getEntrada() == null) {
             mensagemErro.setValue("Registre a entrada primeiro!");
-            return "--:--";
+            return;
         }
 
         if (registroAtual.getSaida() != null) {
             mensagemErro.setValue("Saída já foi registrada!");
-            return registroAtual.calcularHorasTrabalhadas();
+            return;
         }
 
         registroAtual.setSaida(obterHoraAtual());
-        registroAtual.setData(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date()));
 
         String horasFinais = registroAtual.calcularHorasTrabalhadas();
+
+        repository.atualizarRegistro(registroAtual);
+        mensagemSucesso.setValue("✓ Ponto finalizado!\nTotal trabalhado: " + horasFinais);
 
         registroAtual = null;
         pararAtualizacaoAutomatica();
         inicializarEstadoInicial();
-
-        return horasFinais;
     }
 
     private void atualizarInterface() {
@@ -159,23 +210,20 @@ public class HomeViewModel extends ViewModel {
         }
 
         try {
-            SimpleDateFormat sdfCompleto = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-            SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            String dataHoje = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-            Date entrada = sdfCompleto.parse(dataHoje + " " + registroAtual.getEntrada());
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            Date entrada = sdf.parse(registroAtual.getEntrada());
             Date agora = new Date();
 
             long diffMillis = agora.getTime() - entrada.getTime();
 
-
+            // Descontar tempo de almoço
             if (registroAtual.getAlmocoSaida() != null && registroAtual.getAlmocoRetorno() != null) {
-                Date almocoSaida = sdfCompleto.parse(dataHoje + " " + registroAtual.getAlmocoSaida());
-                Date almocoRetorno = sdfCompleto.parse(dataHoje + " " + registroAtual.getAlmocoRetorno());
+                Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
+                Date almocoRetorno = sdf.parse(registroAtual.getAlmocoRetorno());
                 long almocoMillis = almocoRetorno.getTime() - almocoSaida.getTime();
                 diffMillis -= almocoMillis;
             } else if (registroAtual.getAlmocoSaida() != null) {
-                Date almocoSaida = sdfCompleto.parse(dataHoje + " " + registroAtual.getAlmocoSaida());
+                Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
                 diffMillis = almocoSaida.getTime() - entrada.getTime();
             }
 
@@ -188,14 +236,14 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
-
     private String obterHoraAtual() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         return sdf.format(new Date());
     }
 
     public void iniciarAtualizacaoAutomatica() {
-        if (registroAtual != null && !registroAtual.isNoAlmoco()) {
+        if (registroAtual != null &&
+                (registroAtual.getAlmocoSaida() == null || registroAtual.getAlmocoRetorno() != null)) {
             handler.post(atualizadorHoras);
         }
     }
@@ -204,6 +252,7 @@ public class HomeViewModel extends ViewModel {
         handler.removeCallbacks(atualizadorHoras);
     }
 
+    // Getters para LiveData
     public LiveData<String> getStatusText() {
         return statusText;
     }
@@ -232,9 +281,17 @@ public class HomeViewModel extends ViewModel {
         return mensagemErro;
     }
 
+    public LiveData<String> getMensagemSucesso() {
+        return mensagemSucesso;
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         pararAtualizacaoAutomatica();
+    }
+
+    public String finalizarPonto() {
+        return "";
     }
 }

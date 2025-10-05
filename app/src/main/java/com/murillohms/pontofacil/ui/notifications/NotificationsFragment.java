@@ -93,7 +93,6 @@ public class NotificationsFragment extends Fragment {
             return;
         }
 
-        // Verificar permissões (apenas para Android < 10)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(requireContext(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

@@ -11,10 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.murillohms.pontofacil.R;
-import com.murillohms.pontofacil.ui.historico.HistoricoAdapter;
-
 
 public class DashboardFragment extends Fragment {
 
@@ -53,15 +50,18 @@ public class DashboardFragment extends Fragment {
     }
 
     private void observarViewModel() {
+        // Observar registros do mês
         dashboardViewModel.getRegistrosMes().observe(getViewLifecycleOwner(), registros -> {
             if (registros != null && !registros.isEmpty()) {
-//                historicoAdapter.setRegistros(registros);
+                // submitList é do ListAdapter - atualiza automaticamente com DiffUtil
+                historicoAdapter.submitList(registros);
                 rvHistorico.setVisibility(View.VISIBLE);
                 tvSemDados.setVisibility(View.GONE);
 
-
+                // Calcular estatísticas
                 dashboardViewModel.calcularEstatisticas(registros);
             } else {
+                historicoAdapter.submitList(null);
                 rvHistorico.setVisibility(View.GONE);
                 tvSemDados.setVisibility(View.VISIBLE);
 
@@ -71,7 +71,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-
+        // Observar estatísticas
         dashboardViewModel.getTotalHorasMes().observe(getViewLifecycleOwner(), total -> {
             tvTotalHorasMes.setText(total);
         });

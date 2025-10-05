@@ -31,7 +31,7 @@ public class DashboardViewModel extends AndroidViewModel {
         repository = new PontoRepository(application);
         funcionarioAtivo = repository.getFuncionarioAtivo();
 
-        // Observar funcionário e carregar registros do mês atual
+
         registrosMes = Transformations.switchMap(funcionarioAtivo, funcionario -> {
             if (funcionario != null) {
                 String mesAtual = new SimpleDateFormat("MM/yyyy", Locale.getDefault())

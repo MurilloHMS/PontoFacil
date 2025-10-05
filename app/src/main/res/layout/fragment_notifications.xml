@@ -21,7 +21,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
-        <!-- Informações Gerais -->
+        <!-- Informações do Funcionário -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📊 Informações Gerais"
+                    android:text="👤 Seus Dados"
                     android:textColor="#333333"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -47,9 +47,52 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Funcionário"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvNomeFuncionario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Empresa"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvEmpresa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Total de Registros"
-                    android:textColor="#666666"
-                    android:textSize="13sp"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
                     android:layout_marginBottom="4dp" />
 
                 <TextView
@@ -59,31 +102,7 @@
                     android:text="0 registros"
                     android:textColor="#2196F3"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Último Registro"
-                    android:textColor="#666666"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/tvUltimoRegistro"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nenhum registro ainda"
-                    android:textColor="#333333"
-                    android:textSize="14sp"
-                    android:lineSpacingExtra="4dp" />
+                    android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -111,31 +130,39 @@
                     android:layout_marginBottom="16dp" />
 
                 <Button
-                    android:id="@+id/btnExportarDados"
+                    android:id="@+id/btnExportarExcel"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="60dp"
                     android:layout_marginBottom="12dp"
-                    android:backgroundTint="#2196F3"
-                    android:text="📤 Exportar Dados (CSV)"
+                    android:backgroundTint="#4CAF50"
+                    android:text="📤 Exportar para Excel"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textAllCaps="false"
-                    app:cornerRadius="8dp"
-                    app:icon="@android:drawable/ic_menu_save"
-                    app:iconTint="#FFFFFF" />
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnEditarDados"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginBottom="12dp"
+                    android:backgroundTint="#2196F3"
+                    android:text="✏️ Editar Meus Dados"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textAllCaps="false"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/btnLimparHistorico"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="60dp"
                     android:backgroundTint="#F44336"
                     android:text="🗑️ Limpar Todo Histórico"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textAllCaps="false"
-                    app:cornerRadius="8dp"
-                    app:icon="@android:drawable/ic_menu_delete"
-                    app:iconTint="#FFFFFF" />
+                    android:textStyle="bold" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -155,17 +182,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ℹ️ Sobre o App"
+                    android:text="ℹ️ Sobre"
                     android:textColor="#333333"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
 
                 <TextView
-                    android:id="@+id/tvVersao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Versão 1.0.0"
+                    android:text="PontoFácil v1.0.0"
                     android:textColor="#666666"
                     android:textSize="14sp"
                     android:layout_marginBottom="12dp" />
@@ -175,13 +201,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:backgroundTint="#607D8B"
-                    android:text="📱 Sobre o PontoFácil"
+                    android:text="📱 Sobre o Aplicativo"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
-                    android:textAllCaps="false"
-                    app:cornerRadius="8dp"
-                    app:icon="@android:drawable/ic_dialog_info"
-                    app:iconTint="#FFFFFF" />
+                    android:textAllCaps="false" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

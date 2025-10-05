@@ -13,6 +13,9 @@ import com.murillohms.pontofacil.domain.entity.RegistroPontoEntity;
 import com.murillohms.pontofacil.infrastructure.repository.PontoRepository;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -65,12 +68,12 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     private void inicializarEstadoInicial() {
-        statusText.setValue("Aguardando registro de entrada");
-        horasTrabalhadas.setValue("--:--");
-        botaoEntradaHabilitado.setValue(true);
-        botaoAlmocoSaidaHabilitado.setValue(false);
-        botaoAlmocoRetornoHabilitado.setValue(false);
-        botaoSaidaHabilitado.setValue(false);
+        statusText.postValue("Aguardando registro de entrada");
+        horasTrabalhadas.postValue("--:--");
+        botaoEntradaHabilitado.postValue(true);
+        botaoAlmocoSaidaHabilitado.postValue(false);
+        botaoAlmocoRetornoHabilitado.postValue(false);
+        botaoSaidaHabilitado.postValue(false);
     }
 
     private void configurarAtualizadorAutomatico() {
@@ -88,12 +91,12 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void registrarEntrada() {
         if (funcionarioAtual == null) {
-            mensagemErro.setValue("Configure seus dados primeiro!");
+            mensagemErro.postValue("Configure seus dados primeiro!");
             return;
         }
 
         if (registroAtual != null) {
-            mensagemErro.setValue("Você já registrou a entrada hoje!");
+            mensagemErro.postValue("Você já registrou a entrada hoje!");
             return;
         }
 
@@ -104,7 +107,7 @@ public class HomeViewModel extends AndroidViewModel {
 
         repository.inserirRegistro(registroAtual, id -> {
             registroAtual.setId((int) id);
-            mensagemSucesso.setValue("✓ Entrada registrada: " + registroAtual.getEntrada());
+            mensagemSucesso.postValue("✓ Entrada registrada: " + registroAtual.getEntrada());
             atualizarInterface();
             iniciarAtualizacaoAutomatica();
         });
@@ -112,50 +115,50 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void registrarAlmocoSaida() {
         if (registroAtual == null || registroAtual.getEntrada() == null) {
-            mensagemErro.setValue("Registre a entrada primeiro!");
+            mensagemErro.postValue("Registre a entrada primeiro!");
             return;
         }
 
         if (registroAtual.getAlmocoSaida() != null) {
-            mensagemErro.setValue("Almoço já foi registrado!");
+            mensagemErro.postValue("Almoço já foi registrado!");
             return;
         }
 
         registroAtual.setAlmocoSaida(obterHoraAtual());
 
         repository.atualizarRegistro(registroAtual);
-        mensagemSucesso.setValue("✓ Saída para almoço: " + registroAtual.getAlmocoSaida());
+        mensagemSucesso.postValue("✓ Saída para almoço: " + registroAtual.getAlmocoSaida());
         atualizarInterface();
         pararAtualizacaoAutomatica();
     }
 
     public void registrarAlmocoRetorno() {
         if (registroAtual == null || registroAtual.getAlmocoSaida() == null) {
-            mensagemErro.setValue("Registre a saída para almoço primeiro!");
+            mensagemErro.postValue("Registre a saída para almoço primeiro!");
             return;
         }
 
         if (registroAtual.getAlmocoRetorno() != null) {
-            mensagemErro.setValue("Retorno já foi registrado!");
+            mensagemErro.postValue("Retorno já foi registrado!");
             return;
         }
 
         registroAtual.setAlmocoRetorno(obterHoraAtual());
 
         repository.atualizarRegistro(registroAtual);
-        mensagemSucesso.setValue("✓ Retorno do almoço: " + registroAtual.getAlmocoRetorno());
+        mensagemSucesso.postValue("✓ Retorno do almoço: " + registroAtual.getAlmocoRetorno());
         atualizarInterface();
         iniciarAtualizacaoAutomatica();
     }
 
     public void registrarSaida() {
         if (registroAtual == null || registroAtual.getEntrada() == null) {
-            mensagemErro.setValue("Registre a entrada primeiro!");
+            mensagemErro.postValue("Registre a entrada primeiro!");
             return;
         }
 
         if (registroAtual.getSaida() != null) {
-            mensagemErro.setValue("Saída já foi registrada!");
+            mensagemErro.postValue("Saída já foi registrada!");
             return;
         }
 
@@ -164,7 +167,7 @@ public class HomeViewModel extends AndroidViewModel {
         String horasFinais = registroAtual.calcularHorasTrabalhadas();
 
         repository.atualizarRegistro(registroAtual);
-        mensagemSucesso.setValue("✓ Ponto finalizado!\nTotal trabalhado: " + horasFinais);
+        mensagemSucesso.postValue("✓ Ponto finalizado!\nTotal trabalhado: " + horasFinais);
 
         registroAtual = null;
         pararAtualizacaoAutomatica();
@@ -179,60 +182,60 @@ public class HomeViewModel extends AndroidViewModel {
 
             if (registroAtual.getEntrada() != null) {
                 status.append("✓ Entrada: ").append(registroAtual.getEntrada());
-                botaoEntradaHabilitado.setValue(false);
-                botaoAlmocoSaidaHabilitado.setValue(true);
-                botaoAlmocoRetornoHabilitado.setValue(false);
-                botaoSaidaHabilitado.setValue(true);
+                botaoEntradaHabilitado.postValue(false);
+                botaoAlmocoSaidaHabilitado.postValue(true);
+                botaoAlmocoRetornoHabilitado.postValue(false);
+                botaoSaidaHabilitado.postValue(true);
             }
 
             if (registroAtual.getAlmocoSaida() != null) {
                 status.append("\n✓ Almoço saída: ").append(registroAtual.getAlmocoSaida());
-                botaoAlmocoSaidaHabilitado.setValue(false);
-                botaoAlmocoRetornoHabilitado.setValue(true);
-                botaoSaidaHabilitado.setValue(false);
+                botaoAlmocoSaidaHabilitado.postValue(false);
+                botaoAlmocoRetornoHabilitado.postValue(true);
+                botaoSaidaHabilitado.postValue(false);
             }
 
             if (registroAtual.getAlmocoRetorno() != null) {
                 status.append("\n✓ Almoço retorno: ").append(registroAtual.getAlmocoRetorno());
-                botaoAlmocoRetornoHabilitado.setValue(false);
-                botaoSaidaHabilitado.setValue(true);
+                botaoAlmocoRetornoHabilitado.postValue(false);
+                botaoSaidaHabilitado.postValue(true);
             }
 
-            statusText.setValue(status.toString());
+            statusText.postValue(status.toString());
             atualizarHorasTrabalhadas();
         }
     }
 
     private void atualizarHorasTrabalhadas() {
         if (registroAtual == null || registroAtual.getEntrada() == null) {
-            horasTrabalhadas.setValue("--:--");
+            horasTrabalhadas.postValue("--:--");
             return;
         }
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            Date entrada = sdf.parse(registroAtual.getEntrada());
-            Date agora = new Date();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
+            LocalTime entrada = LocalTime.parse(registroAtual.getEntrada(), formatter);
+            LocalTime agora = LocalTime.now();
 
-            long diffMillis = agora.getTime() - entrada.getTime();
+            Duration duracao = Duration.between(entrada, agora);
 
-
+            // Ajusta almoço
             if (registroAtual.getAlmocoSaida() != null && registroAtual.getAlmocoRetorno() != null) {
-                Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
-                Date almocoRetorno = sdf.parse(registroAtual.getAlmocoRetorno());
-                long almocoMillis = almocoRetorno.getTime() - almocoSaida.getTime();
-                diffMillis -= almocoMillis;
+                LocalTime almocoSaida = LocalTime.parse(registroAtual.getAlmocoSaida(), formatter);
+                LocalTime almocoRetorno = LocalTime.parse(registroAtual.getAlmocoRetorno(), formatter);
+                Duration almoco = Duration.between(almocoSaida, almocoRetorno);
+                duracao = duracao.minus(almoco);
             } else if (registroAtual.getAlmocoSaida() != null) {
-                Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
-                diffMillis = almocoSaida.getTime() - entrada.getTime();
+                LocalTime almocoSaida = LocalTime.parse(registroAtual.getAlmocoSaida(), formatter);
+                duracao = Duration.between(entrada, almocoSaida);
             }
 
-            long horas = diffMillis / (1000 * 60 * 60);
-            long minutos = (diffMillis % (1000 * 60 * 60)) / (1000 * 60);
+            long horas = duracao.toHours();
+            long minutos = duracao.toMinutes() % 60;
 
-            horasTrabalhadas.setValue(String.format(Locale.getDefault(), "%02d:%02d", horas, minutos));
+            horasTrabalhadas.postValue(String.format(Locale.getDefault(), "%02d:%02d", horas, minutos));
         } catch (Exception e) {
-            horasTrabalhadas.setValue("--:--");
+            horasTrabalhadas.postValue("--:--");
         }
     }
 

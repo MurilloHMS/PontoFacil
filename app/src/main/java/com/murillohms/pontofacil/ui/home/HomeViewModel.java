@@ -216,7 +216,7 @@ public class HomeViewModel extends AndroidViewModel {
 
             long diffMillis = agora.getTime() - entrada.getTime();
 
-            // Descontar tempo de almoço
+
             if (registroAtual.getAlmocoSaida() != null && registroAtual.getAlmocoRetorno() != null) {
                 Date almocoSaida = sdf.parse(registroAtual.getAlmocoSaida());
                 Date almocoRetorno = sdf.parse(registroAtual.getAlmocoRetorno());

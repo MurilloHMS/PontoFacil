@@ -1,4 +1,4 @@
-package com.murillohms.pontofacil.ui.historico;
+package com.murillohms.pontofacil.ui.dashboard;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;

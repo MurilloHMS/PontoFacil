@@ -70,10 +70,7 @@ public class HomeFragment extends Fragment {
         });
 
         btnSaida.setOnClickListener(v -> {
-            String horasTrabalhadas = homeViewModel.finalizarPonto();
-            Toast.makeText(requireContext(),
-                    "✓ Ponto finalizado!\nTotal: " + horasTrabalhadas,
-                    Toast.LENGTH_LONG).show();
+            homeViewModel.registrarSaida();
         });
     }
 
@@ -109,6 +106,12 @@ public class HomeFragment extends Fragment {
         homeViewModel.getMensagemErro().observe(getViewLifecycleOwner(), mensagem -> {
             if (mensagem != null && !mensagem.isEmpty()) {
                 Toast.makeText(requireContext(), mensagem, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        homeViewModel.getMensagemSucesso().observe(getViewLifecycleOwner(), mensagem -> {
+            if(mensagem != null && !mensagem.isEmpty()){
+                Toast.makeText(requireContext(), mensagem, Toast.LENGTH_LONG).show();
             }
         });
     }

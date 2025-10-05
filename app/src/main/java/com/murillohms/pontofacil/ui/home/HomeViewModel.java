@@ -294,7 +294,7 @@ public class HomeViewModel extends AndroidViewModel {
         pararAtualizacaoAutomatica();
     }
 
-    public String finalizarPonto() {
-        return "";
+    public void finalizarPonto() {
+        registrarSaida();
     }
 }

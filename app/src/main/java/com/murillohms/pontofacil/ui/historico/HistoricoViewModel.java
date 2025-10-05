@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.murillohms.pontofacil.domain.entity.RegistroPontoEntity;
@@ -15,7 +16,8 @@ import java.util.List;
 public class HistoricoViewModel extends AndroidViewModel {
 
     private final PontoRepository repository;
-    private final MutableLiveData<List<RegistroPontoEntity>> registrosLiveData = new MutableLiveData<>();
+    private final MediatorLiveData<List<RegistroPontoEntity>> registrosLiveData = new MediatorLiveData<>();
+
     private final MutableLiveData<String> mensagemErro = new MutableLiveData<>();
 
     public HistoricoViewModel(@NonNull Application application) {
@@ -32,12 +34,17 @@ public class HistoricoViewModel extends AndroidViewModel {
     }
 
     public void carregarHistorico(int funcionarioId) {
-//        repository.getHistorico(funcionarioId, registros -> {
-//            if (registros != null) {
-//                registrosLiveData.postValue(registros);
-//            } else {
-//                mensagemErro.postValue("Não foi possível carregar o histórico.");
-//            }
-//        });
+        registrosLiveData.addSource(
+                repository.getRegistrosByFuncionario(funcionarioId),
+                registros -> {
+                    if (registros != null) {
+                        registrosLiveData.setValue(registros);
+                    } else {
+                        mensagemErro.setValue("Não foi possível carregar o histórico.");
+                    }
+                }
+        );
     }
+
+
 }

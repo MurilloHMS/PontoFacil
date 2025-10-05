@@ -52,6 +52,11 @@ public class HistoricoAdapter extends ListAdapter<RegistroPontoEntity, Historico
 
         ViewHolder(View itemView) {
             super(itemView);
+            tvData = itemView.findViewById(R.id.tvData);
+            tvEntrada = itemView.findViewById(R.id.tvEntrada);
+            tvAlmoco = itemView.findViewById(R.id.tvAlmoco);
+            tvSaida = itemView.findViewById(R.id.tvSaida);
+            tvHoras = itemView.findViewById(R.id.tvHoras);
         }
 
         void bind(RegistroPontoEntity registro) {

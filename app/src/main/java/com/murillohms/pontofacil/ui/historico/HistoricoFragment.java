@@ -23,7 +23,7 @@ public class HistoricoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.item_registro, container, false);
+        return inflater.inflate(R.layout.fragment_historico, container, false);
     }
 
     @Override
@@ -38,17 +38,14 @@ public class HistoricoFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(HistoricoViewModel.class);
 
-        // Observa histórico
         viewModel.getRegistrosLiveData().observe(getViewLifecycleOwner(), registros -> {
             adapter.submitList(registros);
         });
 
-        // Observa erros
         viewModel.getMensagemErro().observe(getViewLifecycleOwner(), erro -> {
             if (erro != null) Toast.makeText(getContext(), erro, Toast.LENGTH_SHORT).show();
         });
 
-        // Carrega histórico do funcionário atual (exemplo: id 1)
         viewModel.carregarHistorico(1);
     }
 }

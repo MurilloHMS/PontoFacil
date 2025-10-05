@@ -22,10 +22,10 @@ public interface RegistroPontoDao {
     @Query("SELECT * FROM registro_ponto WHERE funcionarioId = :funcionarioId ORDER BY data DESC")
     LiveData<List<RegistroPontoEntity>> getAllByFuncionario(int funcionarioId);
 
-    @Query("SELECT * FROM registro_ponto WHERE funcionarioId = :funcionarioId AND data LIKE :mesAno || '%' ORDER BY data DESC")
+    @Query("SELECT * FROM registro_ponto WHERE funcionarioId = :funcionarioId AND data LIKE '%/' || :mesAno ORDER BY data DESC")
     LiveData<List<RegistroPontoEntity>> getByMes(int funcionarioId, String mesAno);
 
-    @Query("SELECT * FROM registro_ponto WHERE funcionarioId = :funcionarioId AND data LIKE :mesAno || '%' ORDER BY data DESC")
+    @Query("SELECT * FROM registro_ponto WHERE funcionarioId = :funcionarioId AND data LIKE '%/' || :mesAno ORDER BY data DESC")
     List<RegistroPontoEntity> getByMesSync(int funcionarioId, String mesAno);
 
     @Query("SELECT * FROM registro_ponto WHERE funcionarioId = :funcionarioId AND data = :data LIMIT 1")

@@ -50,15 +50,15 @@ public class DashboardFragment extends Fragment {
     }
 
     private void observarViewModel() {
-        // Observar registros do mês
+
         dashboardViewModel.getRegistrosMes().observe(getViewLifecycleOwner(), registros -> {
             if (registros != null && !registros.isEmpty()) {
-                // submitList é do ListAdapter - atualiza automaticamente com DiffUtil
+
                 historicoAdapter.submitList(registros);
                 rvHistorico.setVisibility(View.VISIBLE);
                 tvSemDados.setVisibility(View.GONE);
 
-                // Calcular estatísticas
+
                 dashboardViewModel.calcularEstatisticas(registros);
             } else {
                 historicoAdapter.submitList(null);
@@ -71,7 +71,6 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        // Observar estatísticas
         dashboardViewModel.getTotalHorasMes().observe(getViewLifecycleOwner(), total -> {
             tvTotalHorasMes.setText(total);
         });

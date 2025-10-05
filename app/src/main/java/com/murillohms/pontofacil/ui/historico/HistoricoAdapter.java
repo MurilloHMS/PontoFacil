@@ -1,44 +1,50 @@
-package com.murillohms.pontofacil.ui.home;
+package com.murillohms.pontofacil.ui.historico;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.murillohms.pontofacil.R;
 import com.murillohms.pontofacil.domain.entity.RegistroPontoEntity;
 
-import java.util.ArrayList;
-import java.util.List;
+public class HistoricoAdapter extends ListAdapter<RegistroPontoEntity, HistoricoAdapter.ViewHolder> {
 
-public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.ViewHolder> {
-
-    private List<RegistroPontoEntity> registros = new ArrayList<>();
-
-    public void setRegistros(List<RegistroPontoEntity> registros) {
-        this.registros = registros;
-        notifyDataSetChanged();
+    public HistoricoAdapter() {
+        super(DIFF_CALLBACK);
     }
+
+    private static final DiffUtil.ItemCallback<RegistroPontoEntity> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<RegistroPontoEntity>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull RegistroPontoEntity oldItem, @NonNull RegistroPontoEntity newItem) {
+                    return oldItem.getId() == newItem.getId();
+                }
+
+                @SuppressLint("DiffUtilEquals")
+                @Override
+                public boolean areContentsTheSame(@NonNull RegistroPontoEntity oldItem, @NonNull RegistroPontoEntity newItem) {
+                    return oldItem.equals(newItem);
+                }
+            };
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_main, parent, false);
+                .inflate(R.layout.item_registro, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RegistroPontoEntity registro = registros.get(position);
-        holder.bind(registro);
-    }
-
-    @Override
-    public int getItemCount() {
-        return registros.size();
+        holder.bind(getItem(position));
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,11 +52,6 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
 
         ViewHolder(View itemView) {
             super(itemView);
-            tvData = itemView.findViewById(R.id.tvItemData);
-            tvEntrada = itemView.findViewById(R.id.tvItemEntrada);
-            tvAlmoco = itemView.findViewById(R.id.tvItemAlmoco);
-            tvSaida = itemView.findViewById(R.id.tvItemSaida);
-            tvHoras = itemView.findViewById(R.id.tvItemHoras);
         }
 
         void bind(RegistroPontoEntity registro) {

@@ -1,42 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:background="?attr/selectableItemBackground">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
 
-    <TextView
-        android:id="@+id/tvData"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="01/01/2025"
-        android:textStyle="bold"
-        android:textSize="16sp" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FAFAFA">
 
-    <TextView
-        android:id="@+id/tvEntrada"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Entrada: 08:00" />
+        <TextView
+            android:id="@+id/tvData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00/00/0000"
+            android:textColor="#2196F3"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvAlmoco"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Almoço: 12:00 - 13:00" />
+        <TextView
+            android:id="@+id/tvEntrada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Entrada: 00:00"
+            android:textColor="#666666"
+            android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/tvSaida"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Saída: 17:00" />
+        <TextView
+            android:id="@+id/tvAlmoco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Almoço: 00:00 - 00:00"
+            android:textColor="#666666"
+            android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/tvHoras"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total: 8h"
-        android:textStyle="italic" />
+        <TextView
+            android:id="@+id/tvSaida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Saída: 00:00"
+            android:textColor="#666666"
+            android:textSize="14sp" />
 
-</LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#E0E0E0" />
+
+        <TextView
+            android:id="@+id/tvHoras"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: 08:00h"
+            android:textColor="#4CAF50"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
